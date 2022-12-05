@@ -8,7 +8,7 @@ public class Connection extends JPanel {
 
     private JTextField name;
     private JTextField ipAddy;
-    private JTextField chat;
+
 
 
     Integer[] portNum = {8886, 8887, 8888};
