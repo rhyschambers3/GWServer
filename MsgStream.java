@@ -3,20 +3,19 @@ import java.awt.*;
 
 
 public class MsgStream extends JPanel {
-    private JTextField chatMsgs;
+    private JTextArea chatMsgs;
     
     public MsgStream() {
         super();
-        
-        chatMsgs = new JTextField("Incoming Messages:", 50);
+        chatMsgs = new JTextArea("Rhys Chambers", 20,50);
 
-        JPanel dpanel = new JPanel(new FlowLayout()); 
-        
+        JPanel dpanel = new JPanel(new BorderLayout()); 
+        dpanel.add(new JLabel("Members "), BorderLayout.NORTH);
+        dpanel.setSize(1000, 1000);
         chatMsgs.setEditable(false);
         dpanel.add(chatMsgs, BorderLayout.SOUTH);
-        chatMsgs.setBackground(Color.LIGHT_GRAY);
 
-       
+
         this.add(dpanel);
 
 
