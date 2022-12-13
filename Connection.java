@@ -15,9 +15,6 @@ public class Connection extends JPanel {
     ClientHandler handler;
 
 
-
-   
-
     public Connection() {
         super();
 
@@ -46,7 +43,7 @@ public class Connection extends JPanel {
         b.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 if (b.getText().equals("Connect")) { 
-                    if (name.getText().equals("") || portNum.getText().equals("")){
+                    if (name.getText().equals("") || portNum.getText().equals("") || ipAddy.getText().equals("")){
                         createWindow();
                     }
                     sock=null;        
@@ -86,7 +83,6 @@ public class Connection extends JPanel {
                     // handler.in.close();
                     try {
                         sock.close();
-                        System.out.println("Closed socket");
                     } catch (IOException e2) {
                         // do more logging if appropiate
                     }
@@ -118,22 +114,7 @@ public class Connection extends JPanel {
 
      }
 
-//      private static void createUI(JFrame frame){  
-//         JPanel panel = new JPanel();
-//         LayoutManager layout = new FlowLayout();  
-//         panel.setLayout(layout);   
 
-     
-//         JOptionPane.showMessageDialog(frame, "Please ensure compliance!",
-//                "Swing Tester", JOptionPane.ERROR_MESSAGE);
-
-        
-//         // JTextArea errorMsg = new JTextArea(10, 10);
-//         // panel.add(new JLabel("ERROR: "));
-//         // panel.add(new JLabel("CANNOT CONNECT TO SERVER!"), BorderLayout.NORTH);
-//         // panel.add(chat, BorderLayout.SOUTH);
-//         frame.getContentPane().add(panel, BorderLayout.CENTER);   
-// }
 }
 
 
