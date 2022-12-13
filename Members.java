@@ -3,12 +3,12 @@ import java.awt.*;
 
 
 public class Members extends JPanel {
-    private JTextArea members;
+    public static JTextArea members;
     
     public Members() {
         super();
         
-        members = new JTextArea("Rhys Chambers", 20,10);
+        members = new JTextArea("", 20,10);
 
         JPanel dpanel = new JPanel(new BorderLayout()); 
         dpanel.add(new JLabel("Members "), BorderLayout.NORTH);
@@ -19,5 +19,8 @@ public class Members extends JPanel {
         this.add(dpanel);
 
 
+    }
+    public JTextArea getMembTextArea(){
+        return members;  
     }
 }

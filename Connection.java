@@ -1,28 +1,30 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.event.DocumentEvent;
-import  javax.swing.event.DocumentListener;
+import java.net.*;
+import java.io.*;
 
 public class Connection extends JPanel {
 
     private JTextField name;
     private JTextField ipAddy;
+    private JTextField portNum;
+    public ServerSocket serverSock;
+    public static PrintWriter pw;
+    public Socket sock; 
+    ClientHandler handler;
 
 
 
-    Integer[] portNum = {8886, 8887, 8888};
-
-    private final double[] cfact = {
-        1.0000, 1.0 / 12, 3.28084, 0.0328084
-    };
+   
 
     public Connection() {
         super();
 
-        name = new JTextField("Rhys", 10);
-        ipAddy   = new JTextField("IP address", 10);
-        JComboBox numberCombo = new JComboBox<Integer>(portNum); //dropdown options of port numbers
+        name = new JTextField("", 10);
+        ipAddy   = new JTextField("", 10);
+        portNum   = new JTextField("", 10);
+
 
         // Top panel
         JPanel dpanel = new JPanel(new FlowLayout()); 
@@ -32,9 +34,10 @@ public class Connection extends JPanel {
         dpanel.add(new JLabel(" IP Address: "));
         dpanel.add(ipAddy);
 
-        dpanel.add(new JLabel(" Port: "));
-        dpanel.add(numberCombo);
+        dpanel.add(new JLabel("Port: "));
+        dpanel.add(portNum);
 
+        
     
 
 
@@ -42,63 +45,102 @@ public class Connection extends JPanel {
         JButton b = new JButton("Connect");
         b.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
-                name.getDocument().addDocumentListener(new DocumentListener() {
-                    public void changedUpdate(DocumentEvent e) {
-                      warn();
+                if (b.getText().equals("Connect")) { 
+                    if (name.getText().equals("") || portNum.getText().equals("")){
+                        createWindow();
                     }
-                    public void removeUpdate(DocumentEvent e) {
-                      warn();
+                    sock=null;        
+                    try{
+                        
+                        sock = new Socket(ipAddy.getText(),Integer.parseInt(portNum.getText()));
+                        pw = new PrintWriter(sock.getOutputStream());
+                        pw.write("SECRET\n");
+                        pw.write("3c3c4ac618656ae32b7f3431e75f7b26b1a14a87\n");
+                        pw.write("NAME\n");
+                        pw.write(name.getText() + "\n");
+                        
+                        pw.flush(); //flush the output (recall PrintWriters buffer)
+                        
+                        b.setText("Disconnect");
+                        name.setEditable(false); //can't edit name or IP while connected
+                        ipAddy.setEditable(false);
+                        
+                        //get messages
+                        handler = new ClientHandler(sock, MsgStream.chatMsgs, Members.members);
+                        handler.start();
+                
+                }
+                 catch(Exception p){
+                        System.err.print(p.getMessage());
+                        System.exit(1);
                     }
-                    public void insertUpdate(DocumentEvent e) {
-                      warn();
-                    }
-                  
-                    public void warn() {
-                       if (Integer.parseInt(name.getText())<=0){
-                        JFrame error = new JFrame();
-                        error.setTitle("ERROR"); // sets title that appears on the top bar
-                        error.setSize(100, 100);          // sets the size (in pixels) of the frame
-                        error.setLocation(100, 100);      // sets the top-left corner of the window on the desktop
-                        error.setVisible(true);  
-                       }
-                    }
-                  });
-              
-                if (b.getText().equals("Connect")) {
-                    b.setText("Disconnect");
-                    name.setEditable(false); //can't edit name or IP while connected
-                    ipAddy.setEditable(false);
-                }else {
+
+     
+                }
+                else {
                     b.setText("Connect");
                     name.setEditable(true);
                     ipAddy.setEditable(true);
+                
+                    pw.close(); //close the stream
+                    // handler.in.close();
+                    try {
+                        sock.close();
+                        System.out.println("Closed socket");
+                    } catch (IOException e2) {
+                        // do more logging if appropiate
+                    }
+                
                 }
+                
             }
+            
         });
+
         dpanel.add(b);
 
-    
         this.add(dpanel);
-    
-      
-       
-    }
-    public class ButtonClickConnect implements ActionListener {
-
-        private JLabel label;
         
-        public ButtonClickConnect(JLabel label) {
-            this.label = label; //save the label to modify
-        }
-    
-    
-        public void actionPerformed(ActionEvent e) {
-            if (label.getText().equals("Connect")) {
-                label.setText("Disconnect"); //flip text back and forth
-            }else{
-                label.setText("Connect");
-            }
-        }
     }
-         
+
+
+
+    private static void createWindow() {  
+        
+        JPanel panel = new JPanel();
+        LayoutManager layout = new FlowLayout();  
+        panel.setLayout(layout);   
+
+     
+        JOptionPane.showMessageDialog(GWackClientGUI.f, "Please ensure compliance!",
+               "Swing Tester", JOptionPane.ERROR_MESSAGE);
+        GWackClientGUI.f.getContentPane().add(panel, BorderLayout.CENTER);   
+
+     }
+
+//      private static void createUI(JFrame frame){  
+//         JPanel panel = new JPanel();
+//         LayoutManager layout = new FlowLayout();  
+//         panel.setLayout(layout);   
+
+     
+//         JOptionPane.showMessageDialog(frame, "Please ensure compliance!",
+//                "Swing Tester", JOptionPane.ERROR_MESSAGE);
+
+        
+//         // JTextArea errorMsg = new JTextArea(10, 10);
+//         // panel.add(new JLabel("ERROR: "));
+//         // panel.add(new JLabel("CANNOT CONNECT TO SERVER!"), BorderLayout.NORTH);
+//         // panel.add(chat, BorderLayout.SOUTH);
+//         frame.getContentPane().add(panel, BorderLayout.CENTER);   
+// }
 }
+
+
+
+
+
+
+
+
+
